@@ -11,8 +11,8 @@
     <div class="row">
         @foreach (var item in recipes)
         {
-            <div class="card m-2" style="width: 13rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
-                <img class="card-img-top" style="height: 13rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
+            <div class="card m-2" style="width: 10rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
+                <img class="card-img-top" style="height: 10rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
                 <div class="card-body">
                     <p class="card-text">@item.RecipeName</p>
                 </div>

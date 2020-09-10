@@ -2,6 +2,7 @@
 @page "/recipe"
 @inject IRecipeService _recipeService
 @inject IFileReaderService _fileReader
+@inject NavigationManager _navManager
 @using System.Text;
 
 <h3>@title@status</h3>
@@ -130,6 +131,7 @@
             await _recipeService.UpdateRecipe(model);
             status = " - Updated";
         }
+        _navManager.NavigateTo("/recipes");
     }
 
     async Task ChooseFileAsync()
@@ -145,8 +147,8 @@
 
         var fileInfo = await file.ReadFileInfoAsync();
 
-        string extension = System.IO.Path.GetExtension(fileInfo.Name);
-        var allowedExtensions = new string[] { ".jpg", ".png", ".bmp" };
+        string extension = System.IO.Path.GetExtension(fileInfo.Name).ToLower();
+        var allowedExtensions = new string[] { ".jpg",".jpeg", ".png", ".bmp" };
         if (!allowedExtensions.Contains(extension))
         {
             message = "The chosen file is not supported image type";
