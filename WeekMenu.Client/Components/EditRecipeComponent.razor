@@ -1,0 +1,182 @@
+﻿@page "/recipe/{Id:int}"
+@page "/recipe"
+@inject IRecipeService _recipeService
+@inject IFileReaderService _fileReader
+@using System.Text;
+
+<h3>@title@status</h3>
+
+
+<div class="container">
+    <EditForm Model="model" OnValidSubmit="ProcessRecipe">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <div>
+                    <label class="col">
+                        Dish Name
+                        <InputText @bind-Value="model.RecipeName" class="form-control"></InputText>
+                    </label>
+                </div>
+                <div>
+                    <label class="col">
+                        Indredients
+                        <InputTextArea @bind-Value="model.Ingredients" class="form-control"></InputTextArea>
+                    </label>
+                </div>
+                <div>
+                    <label class="col">
+                        Instructions
+                        <InputTextArea @bind-Value="model.How" class="form-control"></InputTextArea>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsVegan" />
+                    <label>Vegan</label>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label>
+                    Suitable for:
+                </label>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsBreakfast" />
+                    <label>Breakfst</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsSecondBreakfast" />
+                    <label>Second Breakfast</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsLunch" />
+                    <label>Lunch</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsAfternoonTea" />
+                    <label>Afternoon Tea</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsDinner" />
+                    <label>Diner</label>
+                </div>
+                <input type="file" class="m-2" @ref="inputReference" @onchange="async()=> await ChooseFileAsync()" />
+                <div>
+                    <img style="max-height:250px; margin:10px" src="@imageContent" />
+                </div>
+                <div>
+                    @message
+                </div>
+
+                <hr />
+
+            </div>
+
+            <button type="submit" class="btn btn-block btn-dark">Submit</button>
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+
+
+    [Parameter]
+    public int Id { get; set; }
+
+    RecipeModel model = new RecipeModel();
+    string imageContent = string.Empty;
+    //string fileName = string.Empty;
+    ElementReference inputReference;
+    string message = string.Empty;
+    string status = string.Empty;
+    System.IO.Stream fileStream = null;
+
+    string title = string.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (Id == 0)
+        {
+            title = "Add New Recipe";
+        }
+        else
+        {
+
+            model = await _recipeService.GetRecipeById(Id);
+            if (model.RecipeModelID==0)
+            {
+                title = "Recipe Not found";
+            }
+            else
+            {
+                ShowModel();
+                title = $"Update {model.RecipeName}";
+            }
+
+        }
+    }
+
+    async Task ProcessRecipe()
+    {
+        if (model.RecipeModelID==0)
+        {
+            await _recipeService.AddRecipe(model);
+            model = new RecipeModel();
+            imageContent = string.Empty;
+        }
+        else
+        {
+            await _recipeService.UpdateRecipe(model);
+            status = " - Updated";
+        }
+    }
+
+    async Task ChooseFileAsync()
+    {
+
+        var file = (await _fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+        {
+            imageContent = string.Empty;
+            return;
+        }
+
+        var fileInfo = await file.ReadFileInfoAsync();
+
+        string extension = System.IO.Path.GetExtension(fileInfo.Name);
+        var allowedExtensions = new string[] { ".jpg", ".png", ".bmp" };
+        if (!allowedExtensions.Contains(extension))
+        {
+            message = "The chosen file is not supported image type";
+            //messageType = Models.AlertMessageType.Error;
+            imageContent = string.Empty;
+            return;
+        }
+
+        using (var memoryStream = await file.CreateMemoryStreamAsync())
+        {
+            model.RecipeImageFile = memoryStream.ToArray();
+            model.RecipeImageName = fileInfo.Name;
+            imageContent = $"data:{fileInfo.Type};base64, {Convert.ToBase64String(memoryStream.ToArray())}";
+        }
+
+    }
+
+    void ShowModel()
+    {
+        if (string.IsNullOrWhiteSpace(model.RecipeImageName)==false)
+        {
+            var fileExtension = model.RecipeImageName.Split('.');
+            imageContent = $"data:image/{fileExtension[fileExtension.Length - 1]};base64, {Convert.ToBase64String(model.RecipeImageFile)}";
+        }
+    }
+
+
+}
+
+
+
+
+

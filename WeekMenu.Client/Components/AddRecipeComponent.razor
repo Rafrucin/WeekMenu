@@ -1,0 +1,126 @@
+﻿@inject IRecipeService _recipeService
+@inject IFileReaderService _fileReader
+@using System.Text;
+
+<h3>Add Recipe Component</h3>
+
+<div class="container">
+    <EditForm Model="model" OnValidSubmit="AddRecipeAsync">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <div>
+                    <label class="col">
+                        Dish Name
+                        <InputText @bind-Value="model.RecipeName" class="form-control"></InputText>
+                    </label>
+                </div>
+                <div>
+                    <label class="col">
+                        Indredients
+                        <InputTextArea @bind-Value="model.Ingredients" class="form-control"></InputTextArea>
+                    </label>
+                </div>
+                <div>
+                    <label class="col">
+                        Instructions
+                        <InputTextArea @bind-Value="model.How" class="form-control"></InputTextArea>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsVegan" />
+                    <label>Vegan</label>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label>
+                    Suitable for:
+                </label>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsBreakfast" />
+                    <label>Breakfst</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsSecondBreakfast" />
+                    <label>Second Breakfast</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsLunch" />
+                    <label>Lunch</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsAfternoonTea" />
+                    <label>Afternoon Tea</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsDinner" />
+                    <label>Diner</label>
+                </div>
+                <input type="file" class="m-2" @ref="inputReference" @onchange="async()=> await ChooseFileAsync()"/>
+                <div>
+                    <img style="max-height:250px; margin:10px" src="@imageContent" />
+                </div>                
+                <div>
+                    @message
+                </div>
+
+                <hr />
+                
+            </div>
+
+            <button type="submit" class="btn btn-block btn-dark">Submit</button>
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+    RecipeModel model = new RecipeModel();
+    string imageContent = string.Empty;
+    //string fileName = string.Empty;
+    ElementReference inputReference;
+    string message = string.Empty;
+    //public byte[] imageByte { get; set; }
+    System.IO.Stream fileStream = null;
+
+
+    async Task AddRecipeAsync()
+    {
+        await _recipeService.AddRecipe(model);
+        model = new RecipeModel();
+        imageContent = string.Empty;
+    }
+
+    async Task ChooseFileAsync()
+    {
+
+        var file = (await _fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
+
+        if (file == null)
+        {
+            imageContent = string.Empty;
+            return;
+        }
+
+        var fileInfo = await file.ReadFileInfoAsync();
+
+        string extension = System.IO.Path.GetExtension(fileInfo.Name);
+        var allowedExtensions = new string[] { ".jpg", ".png", ".bmp" };
+        if (!allowedExtensions.Contains(extension))
+        {
+            message = "The chosen file is not supported image type";
+            //messageType = Models.AlertMessageType.Error;
+            imageContent = string.Empty;
+            return;
+        }
+
+        using (var memoryStream = await file.CreateMemoryStreamAsync())
+        {            
+            model.RecipeImageFile = memoryStream.ToArray();
+            model.RecipeImageName = fileInfo.Name;
+            imageContent = $"data:{fileInfo.Type};base64, {Convert.ToBase64String(memoryStream.ToArray())}";
+        }
+
+    }
+}
