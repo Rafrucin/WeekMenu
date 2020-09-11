@@ -5,8 +5,9 @@
 @inject NavigationManager _navManager
 @using System.Text;
 
-<h3>@title@status</h3>
-
+<div class="p-3">
+    <h3>@title</h3>
+</div>
 
 <div class="container">
     <EditForm Model="model" OnValidSubmit="ProcessRecipe">
@@ -87,11 +88,9 @@
 
     RecipeModel model = new RecipeModel();
     string imageContent = string.Empty;
-    //string fileName = string.Empty;
     ElementReference inputReference;
     string message = string.Empty;
     string status = string.Empty;
-    System.IO.Stream fileStream = null;
 
     string title = string.Empty;
 

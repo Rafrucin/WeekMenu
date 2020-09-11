@@ -1,0 +1,73 @@
+﻿@page "/recipes"
+@inject IRecipeService _recipeService
+
+<div class="p-3">
+    <h3>Find your recipe</h3>
+</div>
+
+<div class="container">
+    <EditForm Model="model" OnValidSubmit="FindRecipeAsync">
+        <div class="row">
+            <div class="form-group col-lg-6">
+                <div>
+                    <label class="col">
+                        Dish Name
+                        <InputText @bind-Value="model.RecipeName" class="form-control"></InputText>
+                    </label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsVegan" />
+                    <label>Vegan</label>
+                </div>
+            </div>
+            <div class="form-group col-lg-6">
+                <label>
+                    Suitable for:
+                </label>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsBreakfast" />
+                    <label>Breakfst</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsSecondBreakfast" />
+                    <label>Second Breakfast</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsLunch" />
+                    <label>Lunch</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsAfternoonTea" />
+                    <label>Afternoon Tea</label>
+                </div>
+                <div class="form-check">
+                    <InputCheckbox @bind-Value="model.IsDinner" />
+                    <label>Diner</label>
+                </div>
+                <div>
+                    @message
+                </div>
+            </div>
+            <button type="submit" class="btn btn-block btn-dark">Find</button>
+        </div>
+    </EditForm>
+
+</div>
+
+<RecipeListComponent FoundRecipes="@recipes" />
+
+@code {
+
+
+
+    RecipeModel model = new RecipeModel();
+    string message = string.Empty;
+    List<RecipeModel> recipes = new List<RecipeModel>();
+
+    async Task FindRecipeAsync()
+    {
+        recipes = await _recipeService.RecipeFinderAsync(model);
+    }
+
+
+}

@@ -10,5 +10,6 @@ namespace WeekMenu.Client.Services
         Task<List<RecipeModel>> GetRecipes();
         Task<RecipeModel> GetRecipeById(int id);
         Task<RecipeModel> UpdateRecipe(RecipeModel recipe);
+        Task<List<RecipeModel>> RecipeFinderAsync(RecipeModel model);
     }
 }

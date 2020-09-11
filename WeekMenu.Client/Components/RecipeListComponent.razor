@@ -1,17 +1,17 @@
-﻿@page "/recipes"
+﻿
 @inject IRecipeService _recipeService
 @inject NavigationManager _navManager
 
-<h3>Recipes</h3>
-
-<h2>@status</h2>
+<div class="p-3">
+    <h3>@status</h3>
+</div>
 
 
 <div class="container">
     <div class="row">
         @foreach (var item in recipes)
         {
-            <div class="card m-2" style="width: 10rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
+            <div class="card m-2 shadow-effect" style="width: 10rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
                 <img class="card-img-top" style="height: 10rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
                 <div class="card-body">
                     <p class="card-text">@item.RecipeName</p>
@@ -22,27 +22,26 @@
 </div>
 
 
-@code {        
+@code {    
+
+    [Parameter]
+    public List<RecipeModel> FoundRecipes { get; set; }
+
 
     List<RecipeModel> recipes = new List<RecipeModel>();
-    string status = "Loading...";
+    string status = string.Empty;
 
     void GoToEditRecipe(int id)
     {
         _navManager.NavigateTo($"/recipe/{id}");
     }
 
-
-    protected async override Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
-        recipes = await _recipeService.GetRecipes();
-        if (recipes.Count==0)
+        recipes = FoundRecipes;
+        if (recipes.Count > 0)        
         {
-            status = "No recipes";
-        }
-        else
-        {
-            status = "done";
+            status = "Click on recipe to edit";
         }
     }
 

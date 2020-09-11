@@ -17,6 +17,39 @@ namespace WeekMenu.Client.Services
             _context = context;
         }
 
+        public async Task<List<RecipeModel>> RecipeFinderAsync(RecipeModel model)
+        {
+            var recipes = _context.RecipesDBSet.Where(x => x.IsVegan == model.IsVegan);
+            if (string.IsNullOrWhiteSpace(model.RecipeName)==false)
+            {
+                recipes = recipes.Where(x => x.RecipeName.Contains(model.RecipeName));
+            }
+            if (model.IsBreakfast==true)
+            {
+                recipes = recipes.Where(x => x.IsBreakfast == model.IsBreakfast);
+            }
+            if (model.IsSecondBreakfast==true)
+            {
+                recipes = recipes.Where(x => x.IsSecondBreakfast == model.IsSecondBreakfast);
+            }
+            if (model.IsLunch==true)
+            {
+                recipes = recipes.Where(x => x.IsLunch == model.IsLunch);
+            }
+            if (model.IsDinner==true)
+            {
+                recipes = recipes.Where(x => x.IsDinner == model.IsDinner);
+            }
+            if (model.IsAfternoonTea==true)
+            {
+                recipes = recipes.Where(x => x.IsAfternoonTea == model.IsAfternoonTea);
+            }
+
+            return await recipes.OrderBy(x=>x.RecipeName.ToLower()).ToListAsync();                                 
+        
+        }
+
+
         public async Task<RecipeModel> AddRecipe(RecipeModel recipe)
         {
             _context.RecipesDBSet.Add(recipe);
