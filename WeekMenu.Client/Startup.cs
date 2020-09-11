@@ -51,8 +51,7 @@ namespace WeekMenu.Client
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-            services.AddSingleton<WeatherForecastService>();
-
+            
             services.AddSignalR(e => {
                 e.MaximumReceiveMessageSize = 102400000;
                 //e.StreamBufferCapacity = 102;
