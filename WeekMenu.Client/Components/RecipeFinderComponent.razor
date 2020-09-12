@@ -54,19 +54,23 @@
 
 </div>
 
-<RecipeListComponent FoundRecipes="@recipes" />
+<RecipeListComponent FoundRecipes="@recipes" status="@result" />
 
 @code {
-
-
 
     RecipeModel model = new RecipeModel();
     string message = string.Empty;
     List<RecipeModel> recipes = new List<RecipeModel>();
+    string result = string.Empty;
 
     async Task FindRecipeAsync()
     {
+        result = string.Empty;
         recipes = await _recipeService.RecipeFinderAsync(model);
+        if (recipes.Count<1)
+        {
+            result = "No results found matching your criteria.";
+        }
     }
 
 

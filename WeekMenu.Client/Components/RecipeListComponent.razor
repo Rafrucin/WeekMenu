@@ -3,7 +3,7 @@
 @inject NavigationManager _navManager
 
 <div class="p-3">
-    <h3>@status</h3>
+    <h4>@status</h4>
 </div>
 
 
@@ -11,10 +11,10 @@
     <div class="row">
         @foreach (var item in recipes)
         {
-            <div class="card m-2 shadow-effect" style="width: 10rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
-                <img class="card-img-top" style="height: 10rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
+            <div class="card m-2 shadow-effect" style="width: 9rem; cursor: pointer;" @onclick="()=>GoToEditRecipe(item.RecipeModelID)" >
+                <img class="card-img-top" style="height: 9rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
                 <div class="card-body">
-                    <p class="card-text">@item.RecipeName</p>
+                    <p class="card-text">@NameTrimer(item.RecipeName) </p>
                 </div>
             </div>
         }
@@ -27,9 +27,19 @@
     [Parameter]
     public List<RecipeModel> FoundRecipes { get; set; }
 
-
     List<RecipeModel> recipes = new List<RecipeModel>();
-    string status = string.Empty;
+
+    [Parameter]
+    public string status { get; set; }
+
+    string NameTrimer(string name)
+    {
+        if (name.Length > 20)
+        {
+            name = $"{name.Substring(0,20)}...";
+        }
+        return name;
+    }
 
     void GoToEditRecipe(int id)
     {
@@ -39,10 +49,11 @@
     protected override void OnParametersSet()
     {
         recipes = FoundRecipes;
-        if (recipes.Count > 0)        
+        if (recipes.Count > 0)
         {
             status = "Click on recipe to edit";
         }
+
     }
 
     string ShowImage(RecipeModel model)
