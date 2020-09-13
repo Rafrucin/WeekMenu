@@ -11,5 +11,6 @@ namespace WeekMenu.Client.Services
         Task<RecipeModel> GetRecipeById(int id);
         Task<RecipeModel> UpdateRecipe(RecipeModel recipe);
         Task<List<RecipeModel>> RecipeFinderAsync(RecipeModel model);
+        Task<List<RecipeModel>> Get5Random();
     }
 }

@@ -18,6 +18,7 @@ using WeekMenu.Client.Data;
 using WeekMenu.Client.Services;
 using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Http.Connections;
+using WeekMenu.Client.Components;
 
 namespace WeekMenu.Client
 {
@@ -44,6 +45,10 @@ namespace WeekMenu.Client
             options.UseSqlite(Configuration.GetConnectionString("SqliteConnectionModels")));
 
             services.AddTransient<IRecipeService, RecipeService>();
+
+            services.AddTransient<IDayMenuService, DayMenuService>();
+
+            services.AddTransient<Weekhelper>();
 
             services.AddFileReaderService();
 

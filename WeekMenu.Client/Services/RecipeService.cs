@@ -17,6 +17,23 @@ namespace WeekMenu.Client.Services
             _context = context;
         }
 
+        public async Task<List<RecipeModel>> Get5Random()
+        {
+            int total = await _context.RecipesDBSet.CountAsync();
+
+            List<RecipeModel> output = new List<RecipeModel>();
+
+            for (int i = 0; i < 5; i++)
+            {                
+                Random r = new Random();
+                int offset = r.Next(0, total);            
+                var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+                output.Add(result);
+            }
+            return output;
+        }
+        
+
         public async Task<List<RecipeModel>> RecipeFinderAsync(RecipeModel model)
         {
             var recipes = _context.RecipesDBSet.Where(x => x.IsVegan == model.IsVegan);
@@ -45,8 +62,7 @@ namespace WeekMenu.Client.Services
                 recipes = recipes.Where(x => x.IsAfternoonTea == model.IsAfternoonTea);
             }
 
-            return await recipes.OrderBy(x=>x.RecipeName.ToLower()).ToListAsync();                                 
-        
+            return await recipes.OrderBy(x=>x.RecipeName.ToLower()).ToListAsync();                                       
         }
 
 
