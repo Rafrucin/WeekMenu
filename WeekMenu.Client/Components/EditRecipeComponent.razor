@@ -63,7 +63,7 @@
                     <label>Diner</label>
                 </div>
                 <input type="file" class="m-2" @ref="inputReference" @onchange="async()=> await ChooseFileAsync()" />
-                <div>
+                <div class="@display">
                     <img style=" height: 10rem; width: 10rem; object-fit: cover;" src="@imageContent" alt=""/>
                 </div>
                 <div class="text-danger">
@@ -89,6 +89,7 @@
     ElementReference inputReference;
     string message = string.Empty;
     string status = string.Empty;
+    string display = string.Empty;
 
     string title = string.Empty;
 
@@ -98,10 +99,10 @@
         {
             title = "Add New Recipe";
             imageContent = "/Images/noImage.png";
+            display = "d-none";
         }
         else
         {
-
             model = await _recipeService.GetRecipeById(Id);
             if (model.RecipeModelID==0)
             {
@@ -112,7 +113,6 @@
                 ShowModel();
                 title = $"Update {model.RecipeName}";
             }
-
         }
     }
 
@@ -134,6 +134,7 @@
     async Task ChooseFileAsync()
     {
         message = string.Empty;
+        display = "d-none";
         var file = (await _fileReader.CreateReference(inputReference).EnumerateFilesAsync()).FirstOrDefault();
 
         if (file == null)
@@ -163,6 +164,7 @@
 
         using (var memoryStream = await file.CreateMemoryStreamAsync())
         {
+            display = string.Empty;
             model.RecipeImageFile = memoryStream.ToArray();
             model.RecipeImageName = fileInfo.Name;
             imageContent = $"data:{fileInfo.Type};base64, {Convert.ToBase64String(memoryStream.ToArray())}";
@@ -172,10 +174,15 @@
 
     void ShowModel()
     {
+        display = string.Empty;
         if (string.IsNullOrWhiteSpace(model.RecipeImageName)==false)
         {
             var fileExtension = model.RecipeImageName.Split('.');
             imageContent = $"data:image/{fileExtension[fileExtension.Length - 1]};base64, {Convert.ToBase64String(model.RecipeImageFile)}";
+        }
+        else
+        {
+            display = "d-none";
         }
     }
 

@@ -3,25 +3,25 @@
 <h3>DayMenuComponent</h3>
 
 <div class="container-fluid">
-    <div class="row p-2 border rounded">
+    <div class="row p-2">
         <div class="d-block">
-            <div class="border p-2">Week</div>
-            <div class="bg-primary p-2">Breakfast</div>
-            <div class="border p-2">Second brekfast</div>
-            <div class="bg-success p-2">Lunch</div>
-            <div class="border p-2">Afternoon Tea</div>
-            <div class="bg-warning p-2">Dinner</div>
+            <div class="border p-1">Week</div>
+            <div class="bg-white border p-1">Breakfast</div>
+            <div class="border  p-1">Second brekfast</div>
+            <div class="bg-white border  p-1">Lunch</div>
+            <div class="border  p-1">Afternoon Tea</div>
+            <div class="bg-white border  p-1">Dinner</div>
         </div>
 
         @foreach (var item in sevenDays)
         {
             <div class="d-block">
-                <div class="border p-2">@item.DayMenuDate.DayOfWeek.ToString()</div>
-                <div class="bg-primary p-2" @onclick="()=>selectRecipe(item.Breakfast)">@NameTrimer(item.Breakfast.RecipeName)</div>
-                <div class="border p-2 ">@NameTrimer(item.SecondBreakfast.RecipeName)</div>
-                <div class="bg-success p-2 ">@NameTrimer(item.Lunch.RecipeName)</div>
-                <div class="border p-2 ">@NameTrimer(item.AfternoonTea.RecipeName)</div>
-                <div class="bg-warning p-2 ">@NameTrimer(item.Dinner.RecipeName)</div>
+                <div class="border p-1">@item.DayMenuDate.DayOfWeek.ToString()</div>
+                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Breakfast)">@NameTrimer(item.Breakfast.RecipeName)</div>
+                <div style="cursor: pointer" class="border p-1" @onclick="()=>selectRecipe(item.SecondBreakfast)">@NameTrimer(item.SecondBreakfast.RecipeName)</div>
+                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Lunch)">@NameTrimer(item.Lunch.RecipeName)</div>
+                <div style="cursor: pointer" class="border p-1 " @onclick="()=>selectRecipe(item.AfternoonTea)">@NameTrimer(item.AfternoonTea.RecipeName)</div>
+                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Dinner)">@NameTrimer(item.Dinner.RecipeName)</div>
             </div>
         }
     </div>
@@ -44,11 +44,12 @@
     {
         nameOfDay = today.DayOfWeek.ToString();
         sevenDays = await _helper.CreateSevenDays(today);
+
     }
 
     void selectRecipe(RecipeModel recipe)
     {
-        selectedRecipe = recipe;
+        selectedRecipe = recipe;        
     }
 
     string NameTrimer(string name)

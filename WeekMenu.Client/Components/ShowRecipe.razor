@@ -2,32 +2,19 @@
 
 
 <div class="container @display">    
-    <div class="row">
-        <div class="col text-center p-3"><h2>@recipeModel.RecipeName</h2></div>
+    <div class="row mx-auto">
+        <div class="col text-center p-3 col-lg-9"><h2>@recipeModel.RecipeName</h2></div>
     </div>
     <div class="row">
-        <div class="col-md-3">
-            <div class="text-center">Ingredients</div>
+        <div class="col-lg-3 mb-2 mx-lg-2 border rounded bg-white">
+            <div class="text-center"><h3>Ingredients</h3></div>
             <div>@recipeModel.Ingredients</div>
         </div>
-        <div class="col-md-3">
-            <div class="text-center">Instructions</div>
+        <div class="col-lg-3 mx-lg-2 border rounded mb-2 bg-white">
+            <div class="text-center"><h3>Instructions</h3></div>
             <div>@recipeModel.How</div>
         </div>
-        <div class="col-md-3 text-center"><img class="card-img-top" style="height: 20rem; width:20rem; object-fit: cover;" src="@imageContent" alt="Card image cap"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div>Ingredients</div>
-            <div>@recipeModel.Ingredients</div>
-        </div>
-        <div class="col-md-6">
-            <div>Instructions</div>
-            <div>@recipeModel.How</div>
-        </div>
-    </div>
-    <div class="row">
-      
+        <div class="mb-2 mx-auto mx-lg-2 text-center" ><img class=" rounded" style="height: 18rem; width:18rem; object-fit: cover;" src="@imageContent" alt="Card image cap"></div>
     </div>
 </div>
 
@@ -54,6 +41,7 @@
             display = "d-none";
         }
         ShowImage();
+
     }
 
     void ShowImage()
@@ -62,6 +50,10 @@
         {
             var fileExtension = recipeModel.RecipeImageName.Split('.');
             imageContent = $"data:image/{fileExtension[fileExtension.Length - 1]};base64, {Convert.ToBase64String(recipeModel.RecipeImageFile)}";
+        }
+        else
+        {
+            imageContent = "/Images/noImage.png";
         }
     }
 
