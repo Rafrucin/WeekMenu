@@ -20,14 +20,25 @@ namespace WeekMenu.Client.Components
             _recipeService = recipeService;
         }
 
-        void CreateWeek()
+        DateTime ReturnMonday(DateTime date)
         {
-            var nameOfDay = today.DayOfWeek.ToString();
+            var today = (int)DateTime.Now.DayOfWeek;
+            if (today == 1)
+            {
+                return DateTime.Now.AddDays(-6);
+            }
+            else
+            {
+                return DateTime.Now.AddDays(-today+1);
+            }
         }
+
 
         public async Task<List<DayMenuModel>>CreateSevenDays(DateTime date)
         {
             List<DayMenuModel> output = new List<DayMenuModel>();
+
+            date = ReturnMonday(date);
             
             for (int i = 0; i < 7; i++)
             {

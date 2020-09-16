@@ -1,30 +1,70 @@
 ﻿@inject Weekhelper _helper
 
-<h3>DayMenuComponent</h3>
+<div class="p-3"><h3>Week Menu Generator</h3></div>
 
-<div class="container-fluid">
-    <div class="row p-2">
-        <div class="d-block">
-            <div class="border p-1">Week</div>
-            <div class="bg-white border p-1">Breakfast</div>
-            <div class="border  p-1">Second brekfast</div>
-            <div class="bg-white border  p-1">Lunch</div>
-            <div class="border  p-1">Afternoon Tea</div>
-            <div class="bg-white border  p-1">Dinner</div>
-        </div>
+<div class="container-fluid d-none d-lg-block">
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr class="bg-dark text-white">
+                <td>Day</td>       
+                <td>Breakfast</td>       
+                <td>Second Breakfast</td> 
+                <td>Lunch</td>       
+                <td>Afternnon Tea</td>
+                <td>Dinner</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sevenDays)
+            {
+                TodayClass = item.DayMenuDate.Date == DateTime.Now.Date? "font-weight-bold" : "";
 
-        @foreach (var item in sevenDays)
-        {
-            <div class="d-block">
-                <div class="border p-1">@item.DayMenuDate.DayOfWeek.ToString()</div>
-                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Breakfast)">@NameTrimer(item.Breakfast.RecipeName)</div>
-                <div style="cursor: pointer" class="border p-1" @onclick="()=>selectRecipe(item.SecondBreakfast)">@NameTrimer(item.SecondBreakfast.RecipeName)</div>
-                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Lunch)">@NameTrimer(item.Lunch.RecipeName)</div>
-                <div style="cursor: pointer" class="border p-1 " @onclick="()=>selectRecipe(item.AfternoonTea)">@NameTrimer(item.AfternoonTea.RecipeName)</div>
-                <div style="cursor: pointer" class="bg-white border p-1" @onclick="()=>selectRecipe(item.Dinner)">@NameTrimer(item.Dinner.RecipeName)</div>
-            </div>
-        }
-    </div>
+                <tr class="@TodayClass">
+                    <td>@item.DayMenuDate.DayOfWeek</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Breakfast)">@NameTrimer(item.Breakfast.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.SecondBreakfast)">@NameTrimer(item.SecondBreakfast.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Lunch)">@NameTrimer(item.Lunch.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.AfternoonTea)">@NameTrimer(item.AfternoonTea.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Dinner)">@NameTrimer(item.Dinner.RecipeName)</td>                    
+                </tr>
+            }
+            </tbody>
+    </table>
+</div>
+<div class="container d-lg-none">
+    
+    <table class="table table-sm table-striped">
+        <thead>
+            <tr>@TodayMenu.DayMenuDate.Date.ToString("dddd, dd MMMM yyyy")</tr>
+            <tr class="bg-dark text-white">
+                <td>Meal</td>
+                <td>Recipe</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="">
+                <td>Breakfast</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Breakfast)">@NameTrimer(TodayMenu.Breakfast.RecipeName)</td>
+            </tr>
+            <tr>
+                <td>Second Breakfast</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.SecondBreakfast)">@NameTrimer(TodayMenu.SecondBreakfast.RecipeName)</td>
+            </tr>
+            <tr>
+                <td>Lunch</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Lunch)">@NameTrimer(TodayMenu.Lunch.RecipeName)</td>
+            </tr>
+            <tr>
+                <td>Afternoon Tea</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.AfternoonTea)">@NameTrimer(TodayMenu.AfternoonTea.RecipeName)</td>
+            </tr>
+            <tr>
+                <td>Dinner</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Dinner)">@NameTrimer(TodayMenu.Dinner.RecipeName)</td>
+            </tr>            
+        </tbody>
+    </table>
+
 </div>
 
 <ShowRecipe recipeParameter="selectedRecipe"/>
@@ -32,24 +72,28 @@
 @code {
     DateTime today = DateTime.Now;
 
-    DayMenuModel day = new DayMenuModel();
+    //DayMenuModel day = new DayMenuModel();
 
     RecipeModel selectedRecipe = new RecipeModel();
 
     List<DayMenuModel> sevenDays = new List<DayMenuModel>();
 
-    string nameOfDay = string.Empty;
+    DayMenuModel TodayMenu = new DayMenuModel();
+    //string nameOfDay = string.Empty;
+
+    string TodayClass = string.Empty;
 
     protected async override Task OnInitializedAsync()
     {
-        nameOfDay = today.DayOfWeek.ToString();
+        //nameOfDay = today.DayOfWeek.ToString();
         sevenDays = await _helper.CreateSevenDays(today);
+        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
 
     }
 
     void selectRecipe(RecipeModel recipe)
     {
-        selectedRecipe = recipe;        
+        selectedRecipe = recipe;
     }
 
     string NameTrimer(string name)
