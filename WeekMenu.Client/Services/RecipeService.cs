@@ -36,7 +36,12 @@ namespace WeekMenu.Client.Services
 
         public async Task<List<RecipeModel>> RecipeFinderAsync(RecipeModel model)
         {
-            var recipes = _context.RecipesDBSet.Where(x => x.IsVegan == model.IsVegan);
+            var recipes = _context.RecipesDBSet.AsQueryable();
+            if (model.IsVegan == true)
+            {
+                recipes = recipes.Where(x => x.IsVegan == model.IsVegan);
+            }
+
             if (string.IsNullOrWhiteSpace(model.RecipeName)==false)
             {
                 recipes = recipes.Where(x => x.RecipeName.Contains(model.RecipeName));
