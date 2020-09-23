@@ -1,6 +1,14 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 
+.raf-border{
+    border:2px !important;
+    border: solid !important;
+    border-color: black !important;
+    border-radius:5px !important;
+
+}
+
 .shadow-effect {
     transition: 0.3s;
 }
@@ -59,7 +67,7 @@ app {
 }
 
 .sidebar {
-    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+    background-image: linear-gradient(180deg, rgb(105, 28, 9) 0%, #812103 70%);
 }
 
     .sidebar .top-row {

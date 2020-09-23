@@ -19,6 +19,7 @@ using WeekMenu.Client.Services;
 using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Http.Connections;
 using WeekMenu.Client.Components;
+using WeekMenu.Client.HelperClasses;
 
 namespace WeekMenu.Client
 {
@@ -49,6 +50,7 @@ namespace WeekMenu.Client
             services.AddTransient<IDayMenuService, DayMenuService>();
 
             services.AddTransient<Weekhelper>();
+            services.AddTransient<DayMenuSetter>();
 
             services.AddFileReaderService();
 

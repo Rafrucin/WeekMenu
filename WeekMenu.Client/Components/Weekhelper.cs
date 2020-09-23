@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WeekMenu.Client.HelperClasses;
 using WeekMenu.Client.Models;
 using WeekMenu.Client.Services;
 
@@ -13,17 +14,19 @@ namespace WeekMenu.Client.Components
         List<DayMenuModel> weekMenu = new List<DayMenuModel>();
         private readonly IDayMenuService _dayService;
         private readonly IRecipeService _recipeService;
+        private readonly DayMenuSetter _daySetter;
 
-        public Weekhelper(IDayMenuService dayService, IRecipeService recipeService)
+        public Weekhelper(IDayMenuService dayService, IRecipeService recipeService, DayMenuSetter daySetter)
         {
             _dayService = dayService;
             _recipeService = recipeService;
+            _daySetter = daySetter;
         }
 
         DateTime ReturnMonday(DateTime date)
         {
             var today = (int)DateTime.Now.DayOfWeek;
-            if (today == 1)
+            if (today == 0)
             {
                 return DateTime.Now.AddDays(-6);
             }

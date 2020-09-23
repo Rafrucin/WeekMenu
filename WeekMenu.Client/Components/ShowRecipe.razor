@@ -3,14 +3,14 @@
 
 <div class="container @display">    
     <div class="row mx-auto">
-        <div class="col text-center p-3 col-lg-9"><h2>@recipeModel.RecipeName</h2></div>
+        <div class="col text-center p-3"><h2>@recipeModel.RecipeName</h2></div>
     </div>
-    <div class="row">
-        <div class="col-lg-3 mb-2 mx-lg-2 border rounded bg-white">
+    <div class="row justify-content-around">
+        <div class="col-md-4 mb-2 mx-md-2 border rounded bg-white">
             <div class="text-center"><h3>Ingredients</h3></div>
             <div>@recipeModel.Ingredients</div>
         </div>
-        <div class="col-lg-3 mx-lg-2 border rounded mb-2 bg-white">
+        <div class="col-md-4  mx-md-2 border rounded mb-2 bg-white">
             <div class="text-center"><h3>Instructions</h3></div>
             <div>@recipeModel.How</div>
         </div>

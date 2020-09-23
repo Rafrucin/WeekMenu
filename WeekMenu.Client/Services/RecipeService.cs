@@ -28,7 +28,15 @@ namespace WeekMenu.Client.Services
                 Random r = new Random();
                 int offset = r.Next(0, total);            
                 var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
-                output.Add(result);
+                if (output.Contains(result))
+                {
+                    i--;
+                }
+                else
+                {
+                    output.Add(result);
+                }
+                
             }
             return output;
         }

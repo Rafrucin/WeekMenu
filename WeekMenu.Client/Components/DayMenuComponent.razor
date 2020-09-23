@@ -1,11 +1,12 @@
-﻿@inject Weekhelper _helper
+﻿@page "/generator"
+@inject Weekhelper _helper
 
 <div class="p-3"><h3>Week Menu Generator</h3></div>
 
 <div class="container-fluid d-none d-lg-block">
     <table class="table table-sm table-striped">
         <thead>
-            <tr class="bg-dark text-white">
+            <tr class="bg-dark text-white rounded-top">
                 <td>Day</td>       
                 <td>Breakfast</td>       
                 <td>Second Breakfast</td> 
@@ -17,7 +18,7 @@
         <tbody>
             @foreach (var item in sevenDays)
             {
-                TodayClass = item.DayMenuDate.Date == DateTime.Now.Date? "font-weight-bold" : "";
+                string TodayClass = item.DayMenuDate.Date == DateTime.Now.Date? "font-weight-bold raf-border" : "";
 
                 <tr class="@TodayClass">
                     <td>@item.DayMenuDate.DayOfWeek</td>
@@ -31,17 +32,28 @@
             </tbody>
     </table>
 </div>
+
+
 <div class="container d-lg-none">
+
+    <div class="row" >
+        
+        <div>
+            <button disabled="@ButtonPrevious" class="btn btn-dark m-2 btn-sm" type="button" @onclick="PreviousDay" >Previous day</button>
+        </div>        
+        <div >
+            <button disabled="@ButtonNext" class="btn btn-dark m-2  btn-sm" type="button" @onclick="NextDay">Next day</button>
+        </div>    
+    </div>
     
     <table class="table table-sm table-striped">
-        <thead>
-            <tr>@TodayMenu.DayMenuDate.Date.ToString("dddd, dd MMMM yyyy")</tr>
-            <tr class="bg-dark text-white">
-                <td>Meal</td>
-                <td>Recipe</td>
-            </tr>
-        </thead>
-        <tbody>
+        <tr>
+            <th class="border-top-0" colspan="2">@TodayMenu.DayMenuDate.Date.ToString("dddd, dd MMMM yyyy")</th>
+        </tr>
+        <tr class="bg-dark text-white">
+            <th>Meal</th>
+            <th>Recipe</th>
+        </tr>        
             <tr class="">
                 <td>Breakfast</td>
                 <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Breakfast)">@NameTrimer(TodayMenu.Breakfast.RecipeName)</td>
@@ -61,8 +73,8 @@
             <tr>
                 <td>Dinner</td>
                 <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Dinner)">@NameTrimer(TodayMenu.Dinner.RecipeName)</td>
-            </tr>            
-        </tbody>
+            </tr>
+  
     </table>
 
 </div>
@@ -71,24 +83,54 @@
 
 @code {
     DateTime today = DateTime.Now;
-
-    //DayMenuModel day = new DayMenuModel();
-
     RecipeModel selectedRecipe = new RecipeModel();
-
     List<DayMenuModel> sevenDays = new List<DayMenuModel>();
-
     DayMenuModel TodayMenu = new DayMenuModel();
-    //string nameOfDay = string.Empty;
+    bool ButtonNext = true;
+    bool ButtonPrevious = false;
 
-    string TodayClass = string.Empty;
+    void PreviousDay()
+    {
+        today = today.AddDays(-1);
+        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+        ButtonDisabler();
+    }
+
+    void NextDay()
+    {
+        today = today.AddDays(1);
+        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+        ButtonDisabler();
+    }
+
+    void ButtonDisabler()
+    {
+        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(-1).Date).Count() == 0)
+        {
+            ButtonPrevious = true;
+        }
+        else
+        {
+            ButtonPrevious = false;
+        }
+        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(1).Date).Count() == 0)
+        {
+            ButtonNext = true;
+        }
+        else
+        {
+            ButtonNext = false;
+        }
+    }
+
+
 
     protected async override Task OnInitializedAsync()
     {
-        //nameOfDay = today.DayOfWeek.ToString();
+
         sevenDays = await _helper.CreateSevenDays(today);
         TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
-
+        ButtonDisabler();
     }
 
     void selectRecipe(RecipeModel recipe)
