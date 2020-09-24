@@ -17,6 +17,25 @@ namespace WeekMenu.Client.Services
             _context = context;
         }
 
+        public async Task<RecipeModel> BreakfastSetterAsync()
+        {
+            int total = await _context.RecipesDBSet.Where(x => x.IsBreakfast == true).CountAsync();
+            Random r = new Random();
+            int offset = r.Next(0, total);
+            var result = await _context.RecipesDBSet.Skip(offset).FirstOrDefaultAsync();
+
+            //if (UniqueChecker(result))
+            //{
+            //    return result;
+            //}
+            //else
+            //{
+            //    BreakfastSetter();
+            //}
+            return result;
+
+        }
+
         public async Task<List<RecipeModel>> Get5Random()
         {
             int total = await _context.RecipesDBSet.CountAsync();

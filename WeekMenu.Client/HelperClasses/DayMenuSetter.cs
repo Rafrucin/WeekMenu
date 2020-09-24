@@ -22,11 +22,12 @@ namespace WeekMenu.Client.HelperClasses
 
         public async Task<DayMenuModel> GetDayMenuAsync(DateTime date)
         {
-            BreakfastSetter();
-            SecondBreakfastSetter();
-            LunchSetter();
-            AfternoonTeaSetter();
-            DinnerSetter();
+            recipes = new List<RecipeModel>();
+            await BreakfastSetterAsync();
+            await SecondBreakfastSetterAsync();
+            await LunchSetterAsync();
+            await AfternoonTeaSetterAsync();
+            await DinnerSetterAsync();
 
             DayMenuModel output = new DayMenuModel
             {
@@ -50,78 +51,84 @@ namespace WeekMenu.Client.HelperClasses
             return true;
         }
 
-        public RecipeModel BreakfastSetter()
+        public async Task<RecipeModel> BreakfastSetterAsync()
         {
-            int total = _context.RecipesDBSet.Where(x => x.IsBreakfast == true).Count();
+            int total = await _context.RecipesDBSet.Where(x => x.IsBreakfast == true).CountAsync();
             Random r = new Random();
             int offset = r.Next(0, total);
-            var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+            Console.WriteLine(r);
+            var result =  await _context.RecipesDBSet.Where(x=>x.IsBreakfast==true).Skip(offset).FirstAsync();
 
-            if(UniqueChecker(result))
-            {
-                return result;
-            }
-            else
-            {            
-                BreakfastSetter();
-            }
+            recipes.Add(result);
+
             return result;
 
         }
 
-        public void SecondBreakfastSetter()
+        public async Task<RecipeModel> SecondBreakfastSetterAsync()
         {
-            int total = _context.RecipesDBSet.Where(x => x.IsSecondBreakfast == true).Count();
+            int total = await _context.RecipesDBSet.Where(x => x.IsSecondBreakfast == true).CountAsync();
             Random r = new Random();
             int offset = r.Next(0, total);
-            var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+            var result = await _context.RecipesDBSet.Where(x => x.IsSecondBreakfast == true).Skip(offset).FirstOrDefaultAsync();
 
             if (UniqueChecker(result))
             {
-                return;
+                return result;
             }
-            SecondBreakfastSetter();
+            else
+            {
+                await SecondBreakfastSetterAsync();
+            }
+
+            return result;
         }
 
-        private void LunchSetter()
+        private async Task<RecipeModel> LunchSetterAsync()
         {
-            int total = _context.RecipesDBSet.Where(x => x.IsLunch == true).Count();
+            int total = await _context.RecipesDBSet.Where(x => x.IsLunch == true).CountAsync();
             Random r = new Random();
             int offset = r.Next(0, total);
-            var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+            var result =await _context.RecipesDBSet.Where(x => x.IsLunch == true).Skip(offset).FirstOrDefaultAsync();
 
             if (UniqueChecker(result))
             {
-                return;
+                return result;
             }
-            LunchSetter();
+            await LunchSetterAsync();
+ 
+            return result;
         }
 
-        private void AfternoonTeaSetter()
+        private async Task<RecipeModel> AfternoonTeaSetterAsync()
         {
-            int total = _context.RecipesDBSet.Where(x => x.IsAfternoonTea == true).Count();
+            int total = await _context.RecipesDBSet.Where(x => x.IsAfternoonTea == true).CountAsync();
             Random r = new Random();
             int offset = r.Next(0, total);
-            var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+            var result = await _context.RecipesDBSet.Where(x => x.IsAfternoonTea == true).Skip(offset).FirstOrDefaultAsync();
 
             if (UniqueChecker(result))
             {
-                return;
+                return result;
             }
-            AfternoonTeaSetter();
+            await AfternoonTeaSetterAsync();
+
+            return result;
         }
-        private void DinnerSetter()
+        private async Task<RecipeModel> DinnerSetterAsync()
         {
-            int total = _context.RecipesDBSet.Where(x => x.IsDinner == true).Count();
+            int total = await _context.RecipesDBSet.Where(x => x.IsDinner == true).CountAsync();
             Random r = new Random();
             int offset = r.Next(0, total);
-            var result = _context.RecipesDBSet.Skip(offset).FirstOrDefault();
+            var result =await _context.RecipesDBSet.Where(x => x.IsDinner == true).Skip(offset).FirstOrDefaultAsync();
 
             if (UniqueChecker(result))
             {
-                return;
+                return result;
             }
-            DinnerSetter();
+            await DinnerSetterAsync();
+
+            return result;
         }
     }
 }

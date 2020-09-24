@@ -79,6 +79,7 @@
 
 </div>
 
+
 <ShowRecipe recipeParameter="selectedRecipe"/>
 
 @code {
@@ -127,11 +128,11 @@
 
     protected async override Task OnInitializedAsync()
     {
-
         sevenDays = await _helper.CreateSevenDays(today);
         TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
-        ButtonDisabler();
+        ButtonDisabler();       
     }
+
 
     void selectRecipe(RecipeModel recipe)
     {
