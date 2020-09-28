@@ -26,12 +26,13 @@
                     <td style="cursor: pointer" @onclick="()=>selectRecipe(item.SecondBreakfast)">@NameTrimer(item.SecondBreakfast.RecipeName)</td>
                     <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Lunch)">@NameTrimer(item.Lunch.RecipeName)</td>
                     <td style="cursor: pointer" @onclick="()=>selectRecipe(item.AfternoonTea)">@NameTrimer(item.AfternoonTea.RecipeName)</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Dinner)">@NameTrimer(item.Dinner.RecipeName)</td>                    
+                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Dinner)" >@NameTrimer(item.Dinner.RecipeName)</td>                    
                 </tr>
             }
             </tbody>
     </table>
 </div>
+
 
 
 <div class="container d-lg-none">
@@ -83,46 +84,46 @@
 <ShowRecipe recipeParameter="selectedRecipe"/>
 
 @code {
-    DateTime today = DateTime.Now;
-    RecipeModel selectedRecipe = new RecipeModel();
-    List<DayMenuModel> sevenDays = new List<DayMenuModel>();
-    DayMenuModel TodayMenu = new DayMenuModel();
-    bool ButtonNext = true;
-    bool ButtonPrevious = false;
+        DateTime today = DateTime.Now;
+        RecipeModel selectedRecipe = new RecipeModel();
+        List<DayMenuModel> sevenDays = new List<DayMenuModel>();
+        DayMenuModel TodayMenu = new DayMenuModel();
+        bool ButtonNext = true;
+        bool ButtonPrevious = false;
 
-    void PreviousDay()
-    {
-        today = today.AddDays(-1);
-        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
-        ButtonDisabler();
-    }
+        void PreviousDay()
+        {
+            today = today.AddDays(-1);
+            TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+            ButtonDisabler();
+        }
 
-    void NextDay()
-    {
-        today = today.AddDays(1);
-        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
-        ButtonDisabler();
-    }
+        void NextDay()
+        {
+            today = today.AddDays(1);
+            TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+            ButtonDisabler();
+        }
 
-    void ButtonDisabler()
-    {
-        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(-1).Date).Count() == 0)
+        void ButtonDisabler()
         {
-            ButtonPrevious = true;
+            if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(-1).Date).Count() == 0)
+            {
+                ButtonPrevious = true;
+            }
+            else
+            {
+                ButtonPrevious = false;
+            }
+            if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(1).Date).Count() == 0)
+            {
+                ButtonNext = true;
+            }
+            else
+            {
+                ButtonNext = false;
+            }
         }
-        else
-        {
-            ButtonPrevious = false;
-        }
-        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(1).Date).Count() == 0)
-        {
-            ButtonNext = true;
-        }
-        else
-        {
-            ButtonNext = false;
-        }
-    }
 
 
 
@@ -130,13 +131,17 @@
     {
         sevenDays = await _helper.CreateSevenDays(today);
         TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
-        ButtonDisabler();       
+        ButtonDisabler();
     }
-
 
     void selectRecipe(RecipeModel recipe)
     {
-        selectedRecipe = recipe;
+        if (selectedRecipe == recipe)
+        { selectedRecipe = new RecipeModel(); }
+        else
+        {
+            selectedRecipe = recipe;
+        }
     }
 
     string NameTrimer(string name)

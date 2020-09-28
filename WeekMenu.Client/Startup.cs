@@ -54,7 +54,6 @@ namespace WeekMenu.Client
 
             services.AddFileReaderService();
 
-
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
