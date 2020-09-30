@@ -3,6 +3,7 @@
 
 <div class="p-3"><h3>Week Menu Generator</h3></div>
 
+
 <div class="container-fluid d-none d-lg-block">
     <table class="table table-sm table-striped">
         <thead>
@@ -22,11 +23,11 @@
 
                 <tr class="@TodayClass">
                     <td>@item.DayMenuDate.DayOfWeek</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Breakfast)">@NameTrimer(item.Breakfast.RecipeName)</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.SecondBreakfast)">@NameTrimer(item.SecondBreakfast.RecipeName)</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Lunch)">@NameTrimer(item.Lunch.RecipeName)</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.AfternoonTea)">@NameTrimer(item.AfternoonTea.RecipeName)</td>
-                    <td style="cursor: pointer" @onclick="()=>selectRecipe(item.Dinner)" >@NameTrimer(item.Dinner.RecipeName)</td>                    
+                    <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(item.Breakfast, item)">@NameTrimer(item.Breakfast.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(item.SecondBreakfast, item)">@NameTrimer(item.SecondBreakfast.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(item.Lunch, item)">@NameTrimer(item.Lunch.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(item.AfternoonTea, item)">@NameTrimer(item.AfternoonTea.RecipeName)</td>
+                    <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(item.Dinner, item)" >@NameTrimer(item.Dinner.RecipeName)</td>                    
                 </tr>
             }
             </tbody>
@@ -57,75 +58,113 @@
         </tr>        
             <tr class="">
                 <td>Breakfast</td>
-                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Breakfast)">@NameTrimer(TodayMenu.Breakfast.RecipeName)</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(TodayMenu.Breakfast, TodayMenu)">@NameTrimer(TodayMenu.Breakfast.RecipeName)</td>
             </tr>
             <tr>
                 <td>Second Breakfast</td>
-                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.SecondBreakfast)">@NameTrimer(TodayMenu.SecondBreakfast.RecipeName)</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(TodayMenu.SecondBreakfast, TodayMenu)">@NameTrimer(TodayMenu.SecondBreakfast.RecipeName)</td>
             </tr>
             <tr>
                 <td>Lunch</td>
-                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Lunch)">@NameTrimer(TodayMenu.Lunch.RecipeName)</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(TodayMenu.Lunch, TodayMenu)">@NameTrimer(TodayMenu.Lunch.RecipeName)</td>
             </tr>
             <tr>
                 <td>Afternoon Tea</td>
-                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.AfternoonTea)">@NameTrimer(TodayMenu.AfternoonTea.RecipeName)</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(TodayMenu.AfternoonTea, TodayMenu)">@NameTrimer(TodayMenu.AfternoonTea.RecipeName)</td>
             </tr>
             <tr>
                 <td>Dinner</td>
-                <td style="cursor: pointer" @onclick="()=>selectRecipe(TodayMenu.Dinner)">@NameTrimer(TodayMenu.Dinner.RecipeName)</td>
+                <td style="cursor: pointer" @onclick="()=>selectRecipeAndDay(TodayMenu.Dinner, TodayMenu)">@NameTrimer(TodayMenu.Dinner.RecipeName)</td>
             </tr>
   
     </table>
 
 </div>
 
+<div>
+    <button type="button" class="btn btn-dark m-2" hidden="@hideChangeMealButton" @onclick="ChangeMeal">Change meal</button>
+</div>
 
-<ShowRecipe recipeParameter="selectedRecipe"/>
+<div hidden="@hideMealSelector"> 
+    <MealSelector dayMenu="dayMenuForSelector" recipe="reciepForSelector" UpdatedDayMenu="@UpdatedDayMenuValue" />
+</div>
+
+<div hidden="@hideShowRecipe">
+    <ShowRecipe recipeParameter="selectedRecipe" />
+</div>
 
 @code {
-        DateTime today = DateTime.Now;
-        RecipeModel selectedRecipe = new RecipeModel();
-        List<DayMenuModel> sevenDays = new List<DayMenuModel>();
-        DayMenuModel TodayMenu = new DayMenuModel();
-        bool ButtonNext = true;
-        bool ButtonPrevious = false;
+    DateTime today = DateTime.Now;
+    RecipeModel selectedRecipe = new RecipeModel();
+    List<DayMenuModel> sevenDays = new List<DayMenuModel>();
+    DayMenuModel TodayMenu = new DayMenuModel();
+    bool ButtonNext = true;
+    bool ButtonPrevious = false;
+    bool hideChangeMealButton = true;
+    bool hideMealSelector = true;
+    DayMenuModel dayMenuForSelector = new DayMenuModel();
+    RecipeModel reciepForSelector = new RecipeModel();
+    DayMenuModel dayMenuForSelectorTemp = new DayMenuModel();
+    public bool hideShowRecipe { get { return !hideMealSelector; } set { hideShowRecipe = !hideMealSelector; } }
 
-        void PreviousDay()
+    void UpdatedDayMenuValue (DayMenuModel model)
+    {
+        foreach (var item in sevenDays)
         {
-            today = today.AddDays(-1);
-            TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
-            ButtonDisabler();
-        }
-
-        void NextDay()
-        {
-            today = today.AddDays(1);
-            TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
-            ButtonDisabler();
-        }
-
-        void ButtonDisabler()
-        {
-            if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(-1).Date).Count() == 0)
+            if (item.DayMenuDate == model.DayMenuDate)
             {
-                ButtonPrevious = true;
-            }
-            else
-            {
-                ButtonPrevious = false;
-            }
-            if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(1).Date).Count() == 0)
-            {
-                ButtonNext = true;
-            }
-            else
-            {
-                ButtonNext = false;
+                item.Breakfast = model.Breakfast;
+                item.SecondBreakfast = model.SecondBreakfast;
+                item.Lunch = model.Lunch;
+                item.AfternoonTea = model.AfternoonTea;
+                item.Dinner = model.Dinner;
             }
         }
+        hideMealSelector = true;
+        selectedRecipe = new RecipeModel();
+        hideChangeMealButton = true;
+    }
 
+    void ChangeMeal()
+    {
+        hideMealSelector = !hideMealSelector;
+        dayMenuForSelector = dayMenuForSelectorTemp;
+        reciepForSelector = selectedRecipe;
+    }
 
+    void PreviousDay()
+    {
+        today = today.AddDays(-1);
+        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+        ButtonDisabler();
+    }
+
+    void NextDay()
+    {
+        today = today.AddDays(1);
+        TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == today.Date).FirstOrDefault();
+        ButtonDisabler();
+    }
+
+    void ButtonDisabler()
+    {
+        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(-1).Date).Count() == 0)
+        {
+            ButtonPrevious = true;
+        }
+        else
+        {
+            ButtonPrevious = false;
+        }
+        if (sevenDays.Where(x => x.DayMenuDate.Date == today.AddDays(1).Date).Count() == 0)
+        {
+            ButtonNext = true;
+        }
+        else
+        {
+            ButtonNext = false;
+        }
+    }
 
     protected async override Task OnInitializedAsync()
     {
@@ -136,11 +175,30 @@
 
     void selectRecipe(RecipeModel recipe)
     {
+        hideChangeMealButton = true;
+        if (selectedRecipe == recipe)
+        {
+            selectedRecipe = new RecipeModel();
+        }
+        else
+        {
+            selectedRecipe = recipe;
+            hideChangeMealButton = false;
+        }
+    }
+
+    void selectRecipeAndDay(RecipeModel recipe, DayMenuModel dayMenu)
+    {
+        hideMealSelector = true;
+        hideChangeMealButton = true;
         if (selectedRecipe == recipe)
         { selectedRecipe = new RecipeModel(); }
         else
         {
             selectedRecipe = recipe;
+            reciepForSelector = recipe;
+            hideChangeMealButton = false;
+            dayMenuForSelectorTemp = dayMenu;
         }
     }
 

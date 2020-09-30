@@ -1,0 +1,128 @@
+﻿@using System.Reflection
+@inject IRecipeService _recipeService
+
+
+<div class="container">
+    <div class="row">
+        @foreach (var item in recipes)
+        {
+            <div class="card m-2 shadow-effect" style="width: 9rem; cursor: pointer;" @onclick="async()=> await UpdateDayMenu(item)" >
+                <img class="card-img-top" style="height: 9rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
+                <div class="card-body">
+                    <p class="card-text">@NameTrimer(item.RecipeName) </p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DayMenuModel dayMenu { get; set; }
+
+    [Parameter]
+    public RecipeModel recipe { get; set; }
+
+    [Parameter]
+    public EventCallback<DayMenuModel> UpdatedDayMenu { get; set; }
+
+    List<RecipeModel> recipes = new List<RecipeModel>();
+
+    string recipePropertyName = "";
+
+    protected async override Task OnParametersSetAsync()
+    {
+        PropertyFinder();
+        await GetRecipesForSelectorAsync();
+    }
+
+    async Task UpdateDayMenu (RecipeModel model)
+    {
+        if (recipePropertyName == "Breakfast")
+        {
+            dayMenu.Breakfast = model;
+        }
+        if (recipePropertyName == "SecondBreakfast")
+        {
+            dayMenu.SecondBreakfast = model;
+        }
+        if (recipePropertyName == "Lunch")
+        {
+            dayMenu.Lunch = model;
+        }
+        if (recipePropertyName == "AfternoonTea")
+        {
+            dayMenu.AfternoonTea = model;
+        }
+        if (recipePropertyName == "Dinner")
+        {
+            dayMenu.Dinner = model;
+        }
+        await UpdatedDayMenu.InvokeAsync(dayMenu);
+    }
+
+
+    private void PropertyFinder()
+    {
+        Type type = dayMenu.GetType();
+
+        // Obtain all fields with type pointer.
+        PropertyInfo[] props = type.GetProperties();
+        foreach (var prop in props)
+        {
+            string name = prop.Name;
+            object temp = prop.GetValue(dayMenu);
+
+            if (temp==recipe)
+            {
+                recipePropertyName = name;
+            }
+        }
+    }
+
+    async Task GetRecipesForSelectorAsync()
+    {
+        RecipeModel temp = new RecipeModel();
+        if (recipePropertyName=="Breakfast")
+        {
+            temp.IsBreakfast = true;
+        }
+        if (recipePropertyName=="SecondBreakfast")
+        {
+            temp.IsSecondBreakfast = true;
+        }
+        if (recipePropertyName=="Lunch")
+        {
+            temp.IsLunch = true;
+        }
+        if (recipePropertyName=="AfternoonTea")
+        {
+            temp.IsAfternoonTea = true;
+        }
+        if (recipePropertyName=="Dinner")
+        {
+            temp.IsLunch = true;
+        }
+        recipes = await _recipeService.RecipeFinderAsync(temp);
+
+    }
+
+    string ShowImage(RecipeModel model)
+    {
+        if (string.IsNullOrWhiteSpace(model.RecipeImageName) == false)
+        {
+            var fileExtension = model.RecipeImageName.Split('.');
+            return $"data:image/{fileExtension[fileExtension.Length - 1]};base64, {Convert.ToBase64String(model.RecipeImageFile)}";
+        }
+        return "/Images/noImage.png";
+    }
+
+    string NameTrimer(string name)
+    {
+        if (name.Length > 15)
+        {
+            name = $"{name.Substring(0, 15)}...";
+        }
+        return name;
+    }
+}
