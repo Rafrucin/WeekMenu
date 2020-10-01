@@ -1,5 +1,6 @@
 ﻿@using System.Reflection
 @inject IRecipeService _recipeService
+@inject IDayMenuService _dayMenuService
 
 
 <div class="container">
@@ -58,6 +59,7 @@
         {
             dayMenu.Dinner = model;
         }
+        await _dayMenuService.UpdateDayMenuModel(dayMenu);
         await UpdatedDayMenu.InvokeAsync(dayMenu);
     }
 

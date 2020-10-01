@@ -42,12 +42,18 @@ namespace WeekMenu.Client.Components
             List<DayMenuModel> output = new List<DayMenuModel>();
 
             date = ReturnMonday(date);
-            
+
             for (int i = 0; i < 7; i++)
             {
-                var day = await _daySetter.GetDayMenuAsync(date.AddDays(i));
-                
-                output.Add(day);
+                DateTime tempDate = date.AddDays(i);
+                var day = await _dayService.GetDayMenuByDate(tempDate);
+
+                if (day.DayMenuModelId==0)
+                {                              
+                    day = await _daySetter.GetDayMenuAsync(date.AddDays(i));                
+                    day = await _dayService.SaveDayMenuModel(day);            
+                }
+                output.Add(day);                
             }
 
             return output;
