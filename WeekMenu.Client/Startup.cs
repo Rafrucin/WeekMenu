@@ -20,6 +20,7 @@ using Tewr.Blazor.FileReader;
 using Microsoft.AspNetCore.Http.Connections;
 using WeekMenu.Client.Components;
 using WeekMenu.Client.HelperClasses;
+using Blazored.LocalStorage;
 
 namespace WeekMenu.Client
 {
@@ -53,6 +54,7 @@ namespace WeekMenu.Client
             services.AddTransient<DayMenuSetter>();
 
             services.AddFileReaderService();
+            services.AddBlazoredLocalStorage();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();

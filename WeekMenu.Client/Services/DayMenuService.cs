@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account.Manage;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +14,28 @@ namespace WeekMenu.Client.Services
     public class DayMenuService : IDayMenuService
     {
         private readonly ModelsDbContext _context;
+        private readonly ILocalStorageService _localStorage;
+        string menuOwner = string.Empty;
 
-        public DayMenuService(ModelsDbContext context)
+        public DayMenuService(ModelsDbContext context, ILocalStorageService localStorage)
         {
             _context = context;
+            _localStorage = localStorage;           
         }
 
         public async Task<DayMenuModel> GetDayMenuByDate(DateTime date)
         {
-            var dayMenu = await _context.DaysDBSet.Where(x => x.DayMenuDate.Date == date.Date).
+            if (string.IsNullOrEmpty(menuOwner))
+            {
+                menuOwner = await _localStorage.GetItemAsync<string>("MenuOwner");
+                if (string.IsNullOrEmpty(menuOwner))
+                {
+                    return new DayMenuModel();
+                }
+            }
+            
+            var dayMenu = await _context.DaysDBSet.
+                Where(x => x.DayMenuDate.Date == date.Date && x.DayMenuOwner==menuOwner).
                 Include(x => x.Breakfast).
                 Include(x => x.SecondBreakfast).
                 Include(x => x.Lunch).
@@ -29,30 +44,30 @@ namespace WeekMenu.Client.Services
 
             if (dayMenu == null)
             {
-                dayMenu = new DayMenuModel();
+                return new DayMenuModel();
             } 
             return dayMenu;
         }
 
         public async Task<DayMenuModel> SaveDayMenuModel(DayMenuModel dayMenuModel)
         {
+            if (string.IsNullOrEmpty(menuOwner))
+            {
+                menuOwner = await _localStorage.GetItemAsync<string>("MenuOwner");
+                if (string.IsNullOrEmpty(menuOwner))
+                {
+                    menuOwner = Guid.NewGuid().ToString();
+                    await _localStorage.SetItemAsync<string>("MenuOwner", menuOwner);
+                }
+            }
+
+            dayMenuModel.DayMenuOwner = menuOwner;
+            dayMenuModel.DayMenuDate = dayMenuModel.DayMenuDate.Date;
+
             var result = _context.DaysDBSet.Add(dayMenuModel);
             await _context.SaveChangesAsync();
 
             return result.Entity;
-        }
-
-        public async Task<DayMenuModel> GetDayMenuModel(DateTime date)
-        {
-            var dayMenuModel = _context.DaysDBSet.AsQueryable();
-            var result = await dayMenuModel.Where(x => x.DayMenuDate == date).FirstOrDefaultAsync();
-
-            if (dayMenuModel == null)
-            {
-                return new DayMenuModel();
-            }
-
-            return result;
         }
 
         public async Task UpdateDayMenuModel(DayMenuModel dayMenuModel)
