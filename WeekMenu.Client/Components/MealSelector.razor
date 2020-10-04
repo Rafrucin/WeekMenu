@@ -4,10 +4,10 @@
 
 
 <div class="container">
-    <div class="row">
+    <div class="row ">
         @foreach (var item in recipes)
         {
-            <div class="card m-2 shadow-effect" style="width: 9rem; cursor: pointer;" @onclick="async()=> await UpdateDayMenu(item)" >
+            <div class="card m-2 shadow-effect fadein" style="width: 9rem; cursor: pointer;" @onclick="async()=> await UpdateDayMenu(item)" >
                 <img class="card-img-top" style="height: 9rem; object-fit: cover;" src="@ShowImage(item)" alt="Card image cap">
                 <div class="card-body">
                     <p class="card-text">@NameTrimer(item.RecipeName) </p>
@@ -30,11 +30,13 @@
     List<RecipeModel> recipes = new List<RecipeModel>();
 
     string recipePropertyName = "";
+    string fader = "";
 
     protected async override Task OnParametersSetAsync()
     {
         PropertyFinder();
         await GetRecipesForSelectorAsync();
+        fader = "fadein";
     }
 
     async Task UpdateDayMenu (RecipeModel model)

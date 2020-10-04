@@ -5,77 +5,79 @@
 @inject NavigationManager _navManager
 @using System.Text;
 
-<div class="p-3">
-    <h3>@title</h3>
-</div>
+<div class="container fadein">
+    <div class="p-3">
+        <h3>@title</h3>
+    </div>
 
-<div class="container">
-    <EditForm Model="model" OnValidSubmit="ProcessRecipe">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-        <div class="row">
-            <div class="form-group col-lg-6">
-                <div>
-                    <label class="col">
-                        Dish Name
-                        <InputText @bind-Value="model.RecipeName" class="form-control"></InputText>
+    <div class="">
+        <EditForm Model="model" OnValidSubmit="ProcessRecipe">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <div>
+                        <label class="col">
+                            Dish Name
+                            <InputText @bind-Value="model.RecipeName" class="form-control"></InputText>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col">
+                            Indredients
+                            <InputTextArea @bind-Value="model.Ingredients" class="form-control"></InputTextArea>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col">
+                            Instructions
+                            <InputTextArea @bind-Value="model.How" class="form-control"></InputTextArea>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsVegan" />
+                        <label>Vegan</label>
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <label>
+                        Suitable for:
                     </label>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsBreakfast" />
+                        <label>Breakfst</label>
+                    </div>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsSecondBreakfast" />
+                        <label>Second Breakfast</label>
+                    </div>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsLunch" />
+                        <label>Lunch</label>
+                    </div>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsAfternoonTea" />
+                        <label>Afternoon Tea</label>
+                    </div>
+                    <div class="form-check">
+                        <InputCheckbox @bind-Value="model.IsDinner" />
+                        <label>Diner</label>
+                    </div>
+                    <input type="file" class="m-2" @ref="inputReference" @onchange="async()=> await ChooseFileAsync()" />
+                    <div class="@display">
+                        <img style=" height: 10rem; width: 10rem; object-fit: cover;" src="@imageContent" alt="" />
+                    </div>
+                    <div class="text-danger">
+                        @message
+                    </div>
+
                 </div>
-                <div>
-                    <label class="col">
-                        Indredients
-                        <InputTextArea @bind-Value="model.Ingredients" class="form-control"></InputTextArea>
-                    </label>
-                </div>
-                <div>
-                    <label class="col">
-                        Instructions
-                        <InputTextArea @bind-Value="model.How" class="form-control"></InputTextArea>
-                    </label>
-                </div>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsVegan" />
-                    <label>Vegan</label>
-                </div>
+
+                <button type="submit" class="btn btn-block btn-dark mb-2">Submit</button>
             </div>
-            <div class="form-group col-lg-6">
-                <label>
-                    Suitable for:
-                </label>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsBreakfast" />
-                    <label>Breakfst</label>
-                </div>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsSecondBreakfast" />
-                    <label>Second Breakfast</label>
-                </div>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsLunch" />
-                    <label>Lunch</label>
-                </div>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsAfternoonTea" />
-                    <label>Afternoon Tea</label>
-                </div>
-                <div class="form-check">
-                    <InputCheckbox @bind-Value="model.IsDinner" />
-                    <label>Diner</label>
-                </div>
-                <input type="file" class="m-2" @ref="inputReference" @onchange="async()=> await ChooseFileAsync()" />
-                <div class="@display">
-                    <img style=" height: 10rem; width: 10rem; object-fit: cover;" src="@imageContent" alt=""/>
-                </div>
-                <div class="text-danger">
-                    @message
-                </div>
+        </EditForm>
 
-            </div>
-
-            <button type="submit" class="btn btn-block btn-dark mb-2">Submit</button>
-        </div>
-    </EditForm>
-
+    </div>
 </div>
 
 @code {

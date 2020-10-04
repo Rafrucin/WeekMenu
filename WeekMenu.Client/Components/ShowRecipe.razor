@@ -26,22 +26,20 @@
 
     RecipeModel recipeModel = new RecipeModel();
     string display = "d-none";
-
     string imageContent = string.Empty;
 
     protected override void OnParametersSet()
-    {
+    {        
         recipeModel = recipeParameter;
         if (recipeModel.RecipeModelID>0)
         {
-            display = string.Empty;
+            display = "fadein";
         }
         else
         {
             display = "d-none";
         }
         ShowImage();
-
     }
 
     void ShowImage()

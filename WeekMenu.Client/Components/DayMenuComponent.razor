@@ -6,13 +6,11 @@
 
 @if (sevenDays.Count == 0)
 {
-    <h4>Loading..</h4>
+    <h4 class="fadein">Loading..</h4>
 }
 else
 {
-
-
-<div class="container-fluid d-none d-lg-block">
+<div class="container-fluid d-none d-lg-block fadein">
     <table class="table table-sm table-striped">
         <thead>
             <tr class="bg-dark text-white rounded-top">
@@ -115,22 +113,23 @@ else
 </div>
 
 <div>
-    <button type="button" class="btn btn-dark m-2" hidden="@hideChangeMealButton" @onclick="ChangeMeal">Change meal</button>
+    <button type="button" class="btn btn-dark m-2 fadein" hidden="@hideChangeMealButton" @onclick="ChangeMeal">Change meal</button>
 </div>
 
 <div hidden="@hideMealSelector"> 
     <MealSelector dayMenu="dayMenuForSelector" recipe="reciepForSelector" UpdatedDayMenu="@UpdatedDayMenuValue" />
 </div>
 
-<div hidden="@hideShowRecipe">
+<div hidden="@hideShowRecipe" >
     <ShowRecipe recipeParameter="selectedRecipe" />
-</div>
-    
+</div>   
         
 }
 
 
 @code {
+
+    
     DateTime today = DateTime.Now;
     RecipeModel selectedRecipe = new RecipeModel();
     List<DayMenuModel> sevenDays = new List<DayMenuModel>();
@@ -210,17 +209,10 @@ else
         {
             sevenDays = await _helper.CreateSevenDays(today);
             TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
-            ButtonDisabler();            
+            ButtonDisabler();
             StateHasChanged();
         }
     }
-
-    //protected async override Task OnInitializedAsync()
-    //{
-    //    sevenDays = await _helper.CreateSevenDays(today);
-    //    TodayMenu = sevenDays.Where(x => x.DayMenuDate.Date == DateTime.Now.Date).FirstOrDefault();
-    //    ButtonDisabler();
-    //}
 
     void selectRecipeAndDay(RecipeModel recipe, DayMenuModel dayMenu)
     {
@@ -236,6 +228,7 @@ else
             hideChangeMealButton = false;
         }
     }
+
 
     string NameTrimer(string name)
     {
